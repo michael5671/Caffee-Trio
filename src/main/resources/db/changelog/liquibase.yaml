@@ -1,0 +1,4 @@
+url: jdbc:postgresql://localhost:5432/ngntu10
+username: ngntu10
+password: nguyentu1005
+driver: org.postgresql.Driver

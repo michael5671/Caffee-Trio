@@ -1,0 +1,129 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
+  # CORS network error (URL scheme must be "http" or "https" for CORS request) solution.
+  # Ref: https://stackoverflow.com/a/73376127
+  forward-headers-strategy: framework
+
+app:
+  secret: ${APP_SECRET}
+  jwt:
+    token:
+      expires-in: ${APP_JWT_TOKEN_EXPIRES_IN}
+    refresh-token:
+      expires-in: ${APP_JWT_REFRESH_TOKEN_EXPIRES_IN}
+    remember-me:
+      expires-in: ${APP_JWT_REMEMBER_ME_EXPIRES_IN}
+  registration:
+    email:
+      token:
+        expires-in: ${APP_REGISTRATION_EMAIL_TOKEN_EXPIRES_IN}
+    password:
+      token:
+        expires-in: ${APP_REGISTRATION_PASSWORD_TOKEN_EXPIRES_IN}
+  default-locale: ${APP_DEFAULT_LOCALE:vi}
+  default-timezone: ${APP_DEFAULT_TIMEZONE:Asia/Ho_Chi_Minh}
+  url: ${APP_URL:http://localhost:${server.port}}
+  frontend-url: ${APP_FRONTEND_URL}
+
+spring:
+  application:
+    name: ${APP_NAME}
+    description: ${APP_DESCRIPTION:App Description}
+  config:
+    import: classpath:env/env.dev.yml
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_DDL_AUTO}
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: false
+        format_sql: true
+        globally_quoted_identifiers: true
+    open-in-view: false
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  data:
+    redis:
+      database: ${REDIS_DATABASE}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: ${REDIS_TIMEOUT}
+    web:
+      pageable:
+        default-page-size: ${PAGEABLE_DEFAULT_PAGE_SIZE:10}
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE:10MB}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE:10MB}
+  messages:
+    basename: locales.messages
+    encoding: UTF-8
+    cache-duration: ${MESSAGES_CACHE_DURATION:-1}
+  #  jackson:
+  #    mapper:
+  #      accept-case-insensitive-enums: true
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          # ssl:
+          #   enable: ${MAIL_SSL:true}
+          # tls:
+          #   enable: ${MAIL_TLS:true}
+          starttls:
+            enable: true
+            required: true
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED:false}
+    change-log: classpath:/db/changelog/master.xml
+#  docker:
+#    compose:
+#      lifecycle-management: none
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs  
+  swagger-ui:
+    enabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+    disable-swagger-default-url: true
+    path: /swagger-ui.html
+    packages-to-scan: com.ngntu10.controller
+  show-actuator: true
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    com.thienducgroup: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO
+  file:
+    name: ./var/logs/app.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      file-name-pattern: ./var/logs/app.%d{yyyy-MM-dd}.%i.log

@@ -1,0 +1,129 @@
+server:
+  port: ${SERVER_PORT_PROD:80}
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH_PROD:/}
+  # CORS network error (URL scheme must be "http" or "https" for CORS request) solution.
+  # Ref: https://stackoverflow.com/a/73376127
+  forward-headers-strategy: framework
+
+app:
+  secret: ${APP_SECRET_PROD}
+  jwt:
+    token:
+      expires-in: ${APP_JWT_TOKEN_EXPIRES_IN}
+    refresh-token:
+      expires-in: ${APP_JWT_REFRESH_TOKEN_EXPIRES_IN}
+    remember-me:
+      expires-in: ${APP_JWT_REMEMBER_ME_EXPIRES_IN}
+  registration:
+    email:
+      token:
+        expires-in: ${APP_REGISTRATION_EMAIL_TOKEN_EXPIRES_IN}
+    password:
+      token:
+        expires-in: ${APP_REGISTRATION_PASSWORD_TOKEN_EXPIRES_IN}
+  default-locale: ${APP_DEFAULT_LOCALE_PROD:vi}
+  default-timezone: ${APP_DEFAULT_TIMEZONE_PROD:Asia/Ho_Chi_Minh}
+  url: ${APP_URL_PROD:http://localhost:${server.port}}
+  frontend-url: ${APP_FRONTEND_URL_PROD}
+
+spring:
+  application:
+    name: ${APP_NAME_PROD}
+    description: ${APP_DESCRIPTION_PROD}
+  config:
+    import:
+      - classpath:env/env.prod.yml
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_DDL_AUTO_PROD}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        format_sql: true
+        globally_quoted_identifiers: true
+    open-in-view: false
+  datasource:
+    url: ${POSTGRESQL_URL_PROD}
+    username: ${POSTGRESQL_USER_PROD}
+    password: ${POSTGRESQL_PASSWORD_PROD}
+  data:
+    redis:
+      database: ${REDIS_DATABASE_PROD}
+      host: ${REDIS_HOST_PROD}
+      port: ${REDIS_PORT_PROD}
+      password: ${REDIS_PASSWORD_PROD}
+      timeout: ${REDIS_TIMEOUT_PROD}
+    web:
+      pageable:
+        default-page-size: ${PAGEABLE_DEFAULT_PAGE_SIZE_PROD}
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE_PROD}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE_PROD}
+  messages:
+    basename: locales.messages
+    encoding: UTF-8
+    cache-duration: ${MESSAGES_CACHE_DURATION_PROD:-1}
+  #  jackson:
+  #    mapper:
+  #      accept-case-insensitive-enums: true
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
+  mail:
+    host: ${MAIL_HOST_PROD}
+    port: ${MAIL_PORT_PROD}
+    username: ${MAIL_USERNAME_PROD}
+    password: ${MAIL_PASSWORD_PROD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          #          ssl:
+          #            enable: ${MAIL_SSL_PROD:false}
+          #          tls:
+          #            enable: ${MAIL_TLS_PROD:false}
+          starttls:
+            enable: true
+            required: true
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED_PROD:false}
+    change-log: classpath:/db/changelog/master.xml
+#  docker:
+#    compose:
+#      lifecycle-management: none
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+    disable-swagger-default-url: true
+    path: /swagger-ui.html
+    packages-to-scan: com.ngntu10.controller
+  show-actuator: true
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    com.thienducgroup: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO
+  file:
+    name: ./var/logs/app.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      file-name-pattern: ./var/logs/app.%d{yyyy-MM-dd}.%i.log
