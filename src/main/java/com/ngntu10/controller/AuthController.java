@@ -11,6 +11,9 @@ import com.ngntu10.dto.response.SuccessResponse;
 import com.ngntu10.dto.response.auth.PasswordResetResponse;
 import com.ngntu10.dto.response.auth.TokenResponse;
 import com.ngntu10.dto.response.user.UserResponse;
+import com.ngntu10.entity.User;
+import com.ngntu10.exception.NotFoundException;
+import com.ngntu10.repository.UserRepository;
 import com.ngntu10.service.Auth.AuthService;
 import com.ngntu10.service.Token.PasswordResetTokenService;
 import com.ngntu10.service.User.UserService;
@@ -41,6 +44,7 @@ public class AuthController {
     private final UserService userService;
 
     private final PasswordResetTokenService passwordResetTokenService;
+    private final UserRepository userRepository;
 
     @PostMapping(Endpoint.Auth.LOGIN)
     public ResponseEntity<APIResponse<TokenResponse>> login(
@@ -172,77 +176,21 @@ public class AuthController {
             .build());
     }
 
-    @GetMapping(Endpoint.Auth.RESET_PASSWORD_TOKEN)
-    @Operation(
-        summary = "Reset password check token endpoint",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PasswordResetResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Bad credentials",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
-    public ResponseEntity<PasswordResetResponse> resetPassword(
-        @Parameter(name = "token", description = "Password reset token", required = true)
-        @PathVariable("token") final String token
+    @GetMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
+    public ResponseEntity<String> resetPassword(
+        @Parameter(name = "email", description = "Password reset email", required = true)
+        @PathVariable("email") final String email
     ) {
-        return ResponseEntity.ok(PasswordResetResponse.convert(passwordResetTokenService.findByToken(token)));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        userService.emailVerificationEventPublisher(user);
+        return ResponseEntity.ok("OTP send");
     }
 
-    @PostMapping(Endpoint.Auth.RESET_PASSWORD_TOKEN)
-    @Operation(
-        summary = "Reset password with token endpoint",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PasswordResetResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Bad credentials",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
+    @PostMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
     public ResponseEntity<SuccessResponse> resetPassword(
-        @Parameter(name = "token", description = "Password reset token", required = true)
-        @PathVariable("token") final String token,
-        @Parameter(description = "Request body to update password", required = true)
+        @Parameter(name = "email", description = "Email password reset", required = true)
+        @PathVariable("email") final String token,
         @RequestBody @Valid ResetPasswordRequest request
     ) {
         userService.resetPassword(token, request);

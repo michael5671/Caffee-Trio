@@ -436,7 +436,7 @@ public class UserService {
      *
      * @param user User
      */
-    protected void emailVerificationEventPublisher(User user) {
+    public void emailVerificationEventPublisher(User user) {
         user.setEmailVerificationToken(emailVerificationTokenService.create(user));
         eventPublisher.publishEvent(new UserEmailVerificationSendEvent(this, user));
     }
