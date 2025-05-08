@@ -3,13 +3,11 @@ package com.ngntu10.service.Auth;
 import com.ngntu10.dto.request.auth.LoginRequest;
 import com.ngntu10.dto.response.auth.TokenExpiresInResponse;
 import com.ngntu10.dto.response.auth.TokenResponse;
-import com.ngntu10.entity.JwtToken;
 import com.ngntu10.entity.User;
 import com.ngntu10.exception.NotFoundException;
 import com.ngntu10.exception.RefreshTokenExpiredException;
 import com.ngntu10.security.JwtTokenProvider;
 import com.ngntu10.security.JwtUserDetails;
-import com.ngntu10.service.Token.JwtTokenService;
 import com.ngntu10.service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,6 @@ import static com.ngntu10.util.Constants.TOKEN_HEADER;
 public class AuthService {
     private final UserService userService;
 
-    private final JwtTokenService jwtTokenService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -76,9 +73,9 @@ public class AuthService {
      * @param bearer String
      * @return TokenResponse
      */
-    public TokenResponse refreshFromBearerString(final String bearer) {
-        return refresh(jwtTokenProvider.extractJwtFromBearerString(bearer));
-    }
+//    public TokenResponse refreshFromBearerString(final String bearer) {
+//        return refresh(jwtTokenProvider.extractJwtFromBearerString(bearer));
+//    }
 
     /**
      * Reset password by e-mail.
@@ -97,15 +94,7 @@ public class AuthService {
      * @param bearer String
      */
     public void logout(User user, final String bearer) {
-        JwtToken jwtToken = jwtTokenService.findByTokenOrRefreshToken(
-            jwtTokenProvider.extractJwtFromBearerString(bearer));
 
-        if (!user.getId().equals(jwtToken.getUserId())) {
-            log.error("User id: {} is not equal to token user id: {}", user.getId(), jwtToken.getUserId());
-            throw new AuthenticationCredentialsNotFoundException("bad_credentials");
-        }
-
-        jwtTokenService.delete(jwtToken);
     }
 
     /**
@@ -123,28 +112,19 @@ public class AuthService {
      * @param refreshToken String
      * @return TokenResponse
      */
-    private TokenResponse refresh(final String refreshToken) {
-        log.info("Refresh request received: {}", refreshToken);
-
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            log.error("Refresh token is expired.");
-            throw new RefreshTokenExpiredException();
-        }
-
-        User user = jwtTokenProvider.getUserFromToken(refreshToken);
-        JwtToken oldToken = jwtTokenService.findByUserIdAndRefreshToken(user.getId(), refreshToken);
-        if (oldToken != null && oldToken.getRememberMe()) {
-            jwtTokenProvider.setRememberMe();
-        }
-
-        boolean rememberMe = false;
-        if (oldToken != null) {
-            rememberMe = oldToken.getRememberMe();
-            jwtTokenService.delete(oldToken);
-        }
-
-        return generateTokens(user.getId(), rememberMe);
-    }
+//    private TokenResponse refresh(final String refreshToken) {
+//        log.info("Refresh request received: {}", refreshToken);
+//
+//        if (!jwtTokenProvider.validateToken(refreshToken)) {
+//            log.error("Refresh token is expired.");
+//            throw new RefreshTokenExpiredException();
+//        }
+//
+//
+//        boolean rememberMe = false;
+//
+//        return generateTokens(user.getId(), rememberMe);
+//    }
 
     /**
      * Generate both access and refresh tokens.
@@ -160,15 +140,6 @@ public class AuthService {
             jwtTokenProvider.setRememberMe();
         }
 
-        jwtTokenService.save(JwtToken.builder()
-            .userId(id)
-            .token(token)
-            .refreshToken(refreshToken)
-            .rememberMe(rememberMe)
-            .ipAddress(httpServletRequest.getRemoteAddr())
-            .userAgent(httpServletRequest.getHeader("User-Agent"))
-            .tokenTimeToLive(jwtTokenProvider.getRefreshTokenExpiresIn())
-            .build());
         log.info("Token generated for user: {}", id);
 
         return TokenResponse.builder()

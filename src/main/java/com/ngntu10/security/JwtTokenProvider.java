@@ -1,9 +1,7 @@
 package com.ngntu10.security;
 
-import com.ngntu10.entity.JwtToken;
 import com.ngntu10.entity.User;
 import com.ngntu10.exception.NotFoundException;
-import com.ngntu10.service.Token.JwtTokenService;
 import com.ngntu10.service.User.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -36,8 +34,6 @@ public class JwtTokenProvider {
 
     private final Long rememberMeTokenExpiresIn;
 
-    private final JwtTokenService jwtTokenService;
-
     private final HttpServletRequest httpServletRequest;
 
     public JwtTokenProvider(
@@ -46,7 +42,6 @@ public class JwtTokenProvider {
         @Value("${app.jwt.refresh-token.expires-in}") final Long refreshTokenExpiresIn,
         @Value("${app.jwt.remember-me.expires-in}") final Long rememberMeTokenExpiresIn,
         final UserService userService,
-        final JwtTokenService jwtTokenService,
         final HttpServletRequest httpServletRequest
     ) {
         this.userService = userService;
@@ -54,7 +49,6 @@ public class JwtTokenProvider {
         this.tokenExpiresIn = tokenExpiresIn;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
         this.rememberMeTokenExpiresIn = rememberMeTokenExpiresIn;
-        this.jwtTokenService = jwtTokenService;
         this.httpServletRequest = httpServletRequest;
     }
 
@@ -151,16 +145,6 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(final String token, final boolean isHttp) {
         parseToken(token);
-        try {
-            JwtToken jwtToken = jwtTokenService.findByTokenOrRefreshToken(token);
-            if (isHttp && !httpServletRequest.getHeader("User-agent").equals(jwtToken.getUserAgent())) {
-                log.error("[JWT] User-agent is not matched");
-                return false;
-            }
-        } catch (NotFoundException e) {
-            log.error("[JWT] Token could not found in Redis");
-            return false;
-        }
 
         return !isTokenExpired(token);
     }

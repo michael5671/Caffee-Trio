@@ -94,73 +94,73 @@ public class AuthController {
             .build());
     }
 
-    @GetMapping(Endpoint.Auth.REFRESH)
-    @Operation(
-        summary = "Refresh endpoint",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = TokenResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Bad credentials",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
-    public ResponseEntity<TokenResponse> refresh(
-        @Parameter(description = "Refresh token", required = true)
-        @RequestHeader("Authorization") @Validated final String refreshToken
-    ) {
-        return ResponseEntity.ok(authService.refreshFromBearerString(refreshToken));
-    }
-
-    @PostMapping(Endpoint.Auth.RESET_PASSWORD)
-    @Operation(
-        summary = "Reset password endpoint",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = SuccessResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Bad credentials",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
+//    @GetMapping(Endpoint.Auth.REFRESH)
+//    @Operation(
+//        summary = "Refresh endpoint",
+//        responses = {
+//            @ApiResponse(
+//                responseCode = "200",
+//                description = "Successful operation",
+//                content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = TokenResponse.class)
+//                )
+//            ),
+//            @ApiResponse(
+//                responseCode = "400",
+//                description = "Bad request",
+//                content = @Content(
+//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                    schema = @Schema(implementation = ErrorResponse.class)
+//                )
+//            ),
+//            @ApiResponse(
+//                responseCode = "401",
+//                description = "Bad credentials",
+//                content = @Content(
+//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                    schema = @Schema(implementation = ErrorResponse.class)
+//                )
+//            )
+//        }
+//    )
+////    public ResponseEntity<TokenResponse> refresh(
+////        @Parameter(description = "Refresh token", required = true)
+////        @RequestHeader("Authorization") @Validated final String refreshToken
+////    ) {
+////        return ResponseEntity.ok(authService.refreshFromBearerString(refreshToken));
+////    }
+//
+//    @PostMapping(Endpoint.Auth.RESET_PASSWORD)
+//    @Operation(
+//        summary = "Reset password endpoint",
+//        responses = {
+//            @ApiResponse(
+//                responseCode = "200",
+//                description = "Successful operation",
+//                content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = SuccessResponse.class)
+//                )
+//            ),
+//            @ApiResponse(
+//                responseCode = "400",
+//                description = "Bad request",
+//                content = @Content(
+//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                    schema = @Schema(implementation = ErrorResponse.class)
+//                )
+//            ),
+//            @ApiResponse(
+//                responseCode = "401",
+//                description = "Bad credentials",
+//                content = @Content(
+//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                    schema = @Schema(implementation = ErrorResponse.class)
+//                )
+//            )
+//        }
+//    )
     public ResponseEntity<SuccessResponse> resetPassword(
         @Parameter(description = "Request body to password", required = true)
         @RequestBody @Valid PasswordRequest request
