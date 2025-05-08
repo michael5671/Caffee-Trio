@@ -28,12 +28,6 @@ public class User extends AbstractBaseEntity {
     @Column(name = "full_name", nullable = false, length = 50)
     private String fullName;
     
-    @Column(name = "phone_number", nullable = false, length = 11)
-    private String phoneNumber;
-    
-    @Column(name = "company", nullable = false, length = 50)
-    private String company;
-    
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(
@@ -70,8 +64,5 @@ public class User extends AbstractBaseEntity {
 
     @Column(name = "email_verified_at")
     private LocalDateTime emailVerifiedAt;
-
-    @Column(name = "blocked_at")
-    private LocalDateTime blockedAt;
 
 }

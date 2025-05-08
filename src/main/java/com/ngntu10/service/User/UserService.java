@@ -216,10 +216,6 @@ public class UserService {
             user.setEmailVerifiedAt(LocalDateTime.now());
         }
 
-        if (request.getIsBlocked() != null && request.getIsBlocked()) {
-            user.setBlockedAt(LocalDateTime.now());
-        }
-
         userRepository.save(user);
 
         log.info("User created with email: {}, {}", user.getEmail(), user.getId());
@@ -393,8 +389,6 @@ public class UserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
-                .company(request.getCompany())
-                .phoneNumber(request.getPhoneNumber())
                 .build();
     }
 

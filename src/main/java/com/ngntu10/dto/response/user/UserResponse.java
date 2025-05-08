@@ -104,11 +104,8 @@ public class UserResponse extends AbstractBaseResponse {
                 .id(user.getId().toString())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
-                .company(user.getCompany())
-                .phoneNumber(user.getPhoneNumber())
                 .roles(user.getRoles().stream().map(role -> role.getName().name()).toList())
                 .emailVerifiedAt(user.getEmailVerifiedAt())
-                .blockedAt(user.getBlockedAt())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

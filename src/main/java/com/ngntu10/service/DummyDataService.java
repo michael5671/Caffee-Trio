@@ -63,22 +63,14 @@ public class DummyDataService implements CommandLineRunner {
                 .email("admin@example.com")
                 .password(defaultPassword)
                 .fullName("John")
-                .company("John Smith")
-                .phoneNumber("0912345678")
                 .roles(roleList)
-                .isEmailVerified(true)
-                .isBlocked(false)
                 .build());
 
         userService.create(CreateUserRequest.builder()
                 .email("user@example.com")
                 .password(defaultPassword)
                 .fullName("Jane")
-                .company("Jane Smith")
-                .phoneNumber("0912345678")
                 .roles(List.of(roleList.get(1)))
-                .isEmailVerified(true)
-                .isBlocked(false)
                 .build());
     }
 }

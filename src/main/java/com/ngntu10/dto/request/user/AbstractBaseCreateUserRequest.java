@@ -50,10 +50,7 @@ public abstract class AbstractBaseCreateUserRequest {
     )
     private String passwordConfirm;
 
-    @NotBlank(message = "{not_blank}")
-    @Size(max = 50, message = "{max_length}")
     @Schema(
-        name = "name",
         description = "Name of the user",
         type = "String",
         requiredMode = Schema.RequiredMode.REQUIRED,
@@ -61,25 +58,4 @@ public abstract class AbstractBaseCreateUserRequest {
     )
     private String fullName;
 
-    @NotBlank(message = "{not_blank}")
-    @Size(max = 100, message = "{max_length}")
-    @Schema(
-            name = "company",
-            description = "Current user company",
-            type = "String",
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            example = "Thien Duc group"
-    )
-    private String company;
-
-    @NotBlank(message = "{not_blank}")
-    @Size(max = 11, message = "{max_length}")
-    @Schema(
-            name = "phoneNumber",
-            description = "Current user phone number",
-            type = "String",
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            example = "0912345678"
-    )
-    private String phoneNumber;
 }
