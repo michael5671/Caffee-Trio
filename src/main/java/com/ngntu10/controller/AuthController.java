@@ -66,27 +66,6 @@ public class AuthController {
     }
 
     @GetMapping(Endpoint.Auth.EMAIL_VERIFICATION_TOKEN)
-    @Operation(
-        summary = "E-mail verification endpoint",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = SuccessResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Not found verification token",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
     public ResponseEntity<SuccessResponse> emailVerification(
         @Parameter(name = "token", description = "E-mail verification token", required = true)
         @PathVariable("token") final String token
@@ -97,74 +76,7 @@ public class AuthController {
             .message("Your email verified")
             .build());
     }
-
-//    @GetMapping(Endpoint.Auth.REFRESH)
-//    @Operation(
-//        summary = "Refresh endpoint",
-//        responses = {
-//            @ApiResponse(
-//                responseCode = "200",
-//                description = "Successful operation",
-//                content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(implementation = TokenResponse.class)
-//                )
-//            ),
-//            @ApiResponse(
-//                responseCode = "400",
-//                description = "Bad request",
-//                content = @Content(
-//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                    schema = @Schema(implementation = ErrorResponse.class)
-//                )
-//            ),
-//            @ApiResponse(
-//                responseCode = "401",
-//                description = "Bad credentials",
-//                content = @Content(
-//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                    schema = @Schema(implementation = ErrorResponse.class)
-//                )
-//            )
-//        }
-//    )
-////    public ResponseEntity<TokenResponse> refresh(
-////        @Parameter(description = "Refresh token", required = true)
-////        @RequestHeader("Authorization") @Validated final String refreshToken
-////    ) {
-////        return ResponseEntity.ok(authService.refreshFromBearerString(refreshToken));
-////    }
-//
-//    @PostMapping(Endpoint.Auth.RESET_PASSWORD)
-//    @Operation(
-//        summary = "Reset password endpoint",
-//        responses = {
-//            @ApiResponse(
-//                responseCode = "200",
-//                description = "Successful operation",
-//                content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(implementation = SuccessResponse.class)
-//                )
-//            ),
-//            @ApiResponse(
-//                responseCode = "400",
-//                description = "Bad request",
-//                content = @Content(
-//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                    schema = @Schema(implementation = ErrorResponse.class)
-//                )
-//            ),
-//            @ApiResponse(
-//                responseCode = "401",
-//                description = "Bad credentials",
-//                content = @Content(
-//                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                    schema = @Schema(implementation = ErrorResponse.class)
-//                )
-//            )
-//        }
-//    )
+    
     public ResponseEntity<SuccessResponse> resetPassword(
         @Parameter(description = "Request body to password", required = true)
         @RequestBody @Valid PasswordRequest request
@@ -189,11 +101,11 @@ public class AuthController {
 
     @PostMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
     public ResponseEntity<SuccessResponse> resetPassword(
-        @Parameter(name = "email", description = "Email password reset", required = true)
-        @PathVariable("email") final String token,
+        @Parameter(name = "otp", description = "otp password reset", required = true)
+        @PathVariable("otp") final String otp,
         @RequestBody @Valid ResetPasswordRequest request
     ) {
-        userService.resetPassword(token, request);
+        userService.resetPassword(otp, request);
 
         return ResponseEntity.ok(SuccessResponse.builder()
             .message("Password reset success successfully")
@@ -201,36 +113,6 @@ public class AuthController {
     }
 
     @GetMapping(Endpoint.Auth.LOGOUT)
-    @Operation(
-        summary = "Logout endpoint",
-        security = @SecurityRequirement(name = SECURITY_SCHEME_NAME),
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successful operation",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = SuccessResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Bad request",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
-    )
     public ResponseEntity<SuccessResponse> logout() {
         authService.logout(userService.getUser());
 
