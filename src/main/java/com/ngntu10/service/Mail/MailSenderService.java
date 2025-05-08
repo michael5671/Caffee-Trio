@@ -15,6 +15,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -73,14 +74,13 @@ public class MailSenderService {
             log.info(String.format("[EmailService] Sending verification e-mail: %s - %s - %s",
                 user.getId(), user.getEmail(), user.getEmailVerificationToken().getToken()));
 
-            String url = String.format("%s/auth/email-verification/%s", frontendUrl,
-                user.getEmailVerificationToken().getToken());
-
+            String otp = user.getEmailVerificationToken().getToken();
             final Context ctx = createContext();
             ctx.setVariable(NAME, user.getFullName());
             ctx.setVariable(LAST_NAME, "");
             ctx.setVariable("fullName", user.getFullName());
-            ctx.setVariable(URL, url);
+//            ctx.setVariable(URL, url);
+            ctx.setVariable("otp", otp);
 
             String subject = "EMAIL VERIFICATION";
             send(new InternetAddress(senderAddress, appName), new InternetAddress(user.getEmail(), user.getFullName()),
