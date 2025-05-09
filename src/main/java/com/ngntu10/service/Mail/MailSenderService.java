@@ -107,6 +107,7 @@ public class MailSenderService {
             ctx.setVariable(NAME, user.getFullName());
             ctx.setVariable(LAST_NAME, "");
             ctx.setVariable("fullName", user.getFullName());
+            ctx.setVariable("otp", user.getPasswordResetToken().getToken());
 //            ctx.setVariable(URL, url);
 
             String subject = "Password reset";
