@@ -10,6 +10,7 @@ public class Endpoint {
         public static final String EMAIL_VERIFICATION_TOKEN = "/email-verification/{token}";
         public static final String REFRESH = "/refresh";
         public static final String RESET_PASSWORD = "/reset-password";
+        public static final String RESET_PASSWORD_OTP = "/reset-password/{otp}";
         public static final String RESET_PASSWORD_EMAIL = "/reset-password/{email}";
         public static final String LOGOUT = "/logout";
     }

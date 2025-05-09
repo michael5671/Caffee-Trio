@@ -76,34 +76,35 @@ public class AuthController {
             .message("Your email verified")
             .build());
     }
-    
+
+    @GetMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
     public ResponseEntity<SuccessResponse> resetPassword(
-        @Parameter(description = "Request body to password", required = true)
-        @RequestBody @Valid PasswordRequest request
+            @Parameter(name = "email", description = "Password reset email", required = true)
+            @PathVariable("email") final String email
     ) {
-        authService.resetPassword(request.getEmail());
+        authService.resetPassword(email);
 
         return ResponseEntity.ok(SuccessResponse.builder()
             .message("password reset link sent")
             .build());
     }
 
-    @GetMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
-    public ResponseEntity<String> resetPassword(
-        @Parameter(name = "email", description = "Password reset email", required = true)
-        @PathVariable("email") final String email
-    ) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        userService.emailVerificationEventPublisher(user);
-        return ResponseEntity.ok("OTP send");
-    }
+//    @GetMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
+//    public ResponseEntity<String> resetPassword(
+//        @Parameter(name = "email", description = "Password reset email", required = true)
+//        @PathVariable("email") final String email
+//    ) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new NotFoundException("User not found"));
+//        userService.emailVerificationEventPublisher(user);
+//        return ResponseEntity.ok("OTP send");
+//    }
 
-    @PostMapping(Endpoint.Auth.RESET_PASSWORD_EMAIL)
+    @PostMapping(Endpoint.Auth.RESET_PASSWORD_OTP)
     public ResponseEntity<SuccessResponse> resetPassword(
         @Parameter(name = "otp", description = "otp password reset", required = true)
-        @PathVariable("otp") final String otp,
-        @RequestBody @Valid ResetPasswordRequest request
+        @PathVariable("otp")  String otp,
+        @RequestBody ResetPasswordRequest request
     ) {
         userService.resetPassword(otp, request);
 
@@ -114,7 +115,7 @@ public class AuthController {
 
     @GetMapping(Endpoint.Auth.LOGOUT)
     public ResponseEntity<SuccessResponse> logout() {
-        authService.logout(userService.getUser());
+//        authService.logout(userService.getUser());
 
         return ResponseEntity.ok(SuccessResponse.builder()
             .message("Logout successfully")

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import static com.ngntu10.util.Constants.PASSWORD_RESET_TOKEN_LENGTH;
@@ -53,7 +54,7 @@ public class PasswordResetTokenService {
      * @return PasswordResetToken
      */
     public PasswordResetToken create(User user) {
-        String newToken = new RandomStringGenerator(PASSWORD_RESET_TOKEN_LENGTH).next();
+        String newToken = String.valueOf(100000 + new Random().nextInt(900000));
         Date expirationDate = Date.from(Instant.now().plusSeconds(expiresIn));
         Optional<PasswordResetToken> oldToken = passwordResetTokenRepository.findByUserId(user.getId());
         PasswordResetToken passwordResetToken;

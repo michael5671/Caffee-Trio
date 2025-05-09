@@ -103,14 +103,11 @@ public class MailSenderService {
             log.info(String.format("[EmailService] Sending reset password e-mail: %s - %s - %s",
                 user.getId(), user.getEmail(), user.getPasswordResetToken().getToken()));
 
-            String url = String.format("%s/auth/password/%s", frontendUrl,
-                user.getPasswordResetToken().getToken());
-
             final Context ctx = createContext();
             ctx.setVariable(NAME, user.getFullName());
             ctx.setVariable(LAST_NAME, "");
             ctx.setVariable("fullName", user.getFullName());
-            ctx.setVariable(URL, url);
+//            ctx.setVariable(URL, url);
 
             String subject = "Password reset";
             send(new InternetAddress(senderAddress, appName), new InternetAddress(user.getEmail(), user.getFullName()),

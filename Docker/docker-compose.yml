@@ -1,68 +1,15 @@
 services:
   app:
-    image: ngntu10/app:latest
+    image: ngntu10/caffeetrio:latest
     container_name: ngntu10-spring-app
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
+#    restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/
-      SPRING_DATASOURCE_USERNAME: 
-      SPRING_DATASOURCE_PASSWORD: 
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PASSWORD: 
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://nt118p22-cafetrio.i.aivencloud.com:25794/defaultdb
+      SPRING_DATASOURCE_USERNAME: avnadmin
+      SPRING_DATASOURCE_PASSWORD: AVNS_tqpyXsGYH2HDhHtkwod
     ports:
       - "8080:8080"
-    networks:
-      - ngntu10-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-  postgres:
-    image: postgres:13.11-bullseye
-    container_name: ngntu10-postgres
-    restart: always
-    environment:
-      POSTGRES_DB: ngntu10
-      POSTGRES_USER: ngntu10
-      POSTGRES_PASSWORD: ngntu10
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./var/logs/postgresql:/var/log/postgresql
-    networks:
-      - ngntu10-network
-  redis:
-    depends_on:
-      - postgres
-    image: redis:7.0.12-alpine
-    container_name: ngntu10-redis
-    restart: always
-    command: redis-server --save 20 1 --loglevel warning --requirepass "ngntu10"
-    volumes:
-      - redis-data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - ngntu10-network
-  redis-commander:
-    image: rediscommander/redis-commander:redis-commander-210
-    restart: always
-    container_name: ngntu10-redis-commander
-    environment:
-      REDIS_HOST: 103.82.194.197
-      REDIS_PORT: 6379
-      REDIS_USERNAME: ngntu10
-      REDIS_PASSWORD: ngntu10
-      HTTP_USER: admin
-      HTTP_PASSWORD: ngntu10
-    ports:
-      - "6380:8081"
     networks:
       - ngntu10-network
   mailhog:
@@ -74,11 +21,6 @@ services:
       - "587:587"
     networks:
       - ngntu10-network
-
-volumes:
-  postgres-data:
-  redis-data:
-
 networks:
   ngntu10-network:
     name: ngntu10-network

@@ -3,7 +3,9 @@ package com.ngntu10.service.User;
 import com.ngntu10.dto.request.auth.RegisterRequest;
 import com.ngntu10.dto.request.auth.ResetPasswordRequest;
 import com.ngntu10.dto.request.user.*;
+import com.ngntu10.dto.response.auth.PasswordResetResponse;
 import com.ngntu10.dto.response.user.UserResponse;
+import com.ngntu10.entity.PasswordResetToken;
 import com.ngntu10.entity.User;
 import com.ngntu10.service.Token.EmailVerificationTokenService;
 import com.ngntu10.service.Token.PasswordResetTokenService;
@@ -352,7 +354,7 @@ public class UserService {
         log.info("Sending password reset mail to email: {}", email);
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException("not_found_with_param"));
-
+        PasswordResetToken passwordResetToken = passwordResetTokenService.create(user);
         passwordResetEventPublisher(user);
         log.info("Password reset mail sent to email: {}", email);
     }
