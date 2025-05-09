@@ -42,7 +42,7 @@ public class OpenAPISwaggerConfig {
         License mitLicense = new License().name("Apache 2.0").url("https://springdoc.org");
 
         Info info = new Info()
-                .title("THIENDUCGROUP API")
+                .title("CAFFEETRIO API")
                 .version("3.0.0")
                 .contact(contact)
                 .description("This API exposes optimart endpoints.")
