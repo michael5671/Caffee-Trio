@@ -64,5 +64,4 @@ public class User extends AbstractBaseEntity {
 
     @Column(name = "email_verified_at")
     private LocalDateTime emailVerifiedAt;
-
 }
