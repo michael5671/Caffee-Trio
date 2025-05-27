@@ -44,11 +44,11 @@ public class AppExceptionHandler {
         return build(HttpStatus.METHOD_NOT_ALLOWED, "Method not supported");
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public final ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(final HttpMessageNotReadableException e) {
-        log.error(e.toString(), e.getMessage());
-        return build(HttpStatus.BAD_REQUEST, "Malformed json request");
-    }
+//    @ExceptionHandler(HttpMessageNotReadableException.class)
+//    public final ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(final HttpMessageNotReadableException e) {
+//        log.error(e.toString(), e.getMessage());
+//        return build(HttpStatus.BAD_REQUEST, "Malformed json request");
+//    }
 
     @ExceptionHandler(BindException.class)
     public final ResponseEntity<ErrorResponse> handleBindException(final BindException e) {

@@ -121,3 +121,12 @@ logging:
   logback:
     rollingpolicy:
       file-name-pattern: ./var/logs/app.%d{yyyy-MM-dd}.%i.log
+payment:
+  vnPay:
+    url: ${PAY_URL}
+    returnUrl: ${RETURN_URL}
+    tmnCode: ${TMN_CODE}
+    secretKey: ${SECRET_KEY}
+    command: ${COMMAND}
+    orderType: ${ORDER_TYPE}
+    version: ${VERSION}
