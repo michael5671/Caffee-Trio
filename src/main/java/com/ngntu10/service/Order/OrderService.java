@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,7 +117,8 @@ public class OrderService{
     @Transactional(readOnly = true)
     public Page<Order> getAllOrderByMe(ListOrderRequest listOrderRequest, Pageable pageable) {
         User user = userService.getUser();
-        return null;
+        List<Order> orderList = user.getOrderList();
+        return new PageImpl<Order>(orderList, pageable, orderList.size());
     }
     
 }
