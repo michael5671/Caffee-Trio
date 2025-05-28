@@ -1,6 +1,10 @@
 package com.ngntu10.controller;
 
 import com.ngntu10.annotation.SecuredSwaggerOperation;
+import com.ngntu10.dto.request.ChangeOrderStatus;
+import com.ngntu10.dto.response.APIResponse;
+import com.ngntu10.dto.response.VNPAYResponse;
+import com.ngntu10.service.Order.OrderService;
 import com.ngntu10.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +20,7 @@ import java.util.Map;
 @Tag(name = "Payment", description = "Everything about payment by VNPAY")
 public class PaymentController {
     private final PaymentService paymentService;
+    private final OrderService orderService;
 
     @SecuredSwaggerOperation(summary = "Create VNPAY payment url")
     @PostMapping("/vnpay")
@@ -30,12 +35,13 @@ public class PaymentController {
         String orderId = request.getParameter("vnp_OrderInfo");
         long amount = Long.parseLong(request.getParameter("vnp_Amount"))/100;
         if (status.equals("00")) {
-//            orderService.handlePaymentOrderById(orderId);
-//            APIResponse<VNPAYResponse> response = new APIResponse<>(new VNPAYResponse(status, localizationUtils.getLocalizedMessage(MessageKeys.PAY_SUCCESS), "", amount), "Success");
-            return ResponseEntity.ok("Success");
+            orderService.changeStatusOrder(orderId, new ChangeOrderStatus(2));
+            APIResponse<VNPAYResponse> response = new APIResponse<>(false, 200,
+                    new VNPAYResponse(status, "" , "", amount), "Success");
         } else {
-//            APIResponse<VNPAYResponse> response = new APIResponse<>(null, localizationUtils.getLocalizedMessage(MessageKeys.PAY_FAILED));
-            return ResponseEntity.badRequest().body("Failed");
+            APIResponse<VNPAYResponse> response = new APIResponse<>(true, 200, null, "Failed");
+            return ResponseEntity.badRequest().body(response);
         }
+        return null;
     }
 }
