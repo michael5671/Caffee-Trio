@@ -35,18 +35,6 @@ public class Order extends AbstractBaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private int isPaid = 0;
-
-    @Column(nullable = false)
-    private int isDelivered = 0;
-
-    @Column
-    private Date paidAt = new Date();
-
-    @Column(name = "deliveryAt")
-    private Date deliveryAt = new Date();
-
     @Column(name = "status")
     private int orderStatus = 0;
 }

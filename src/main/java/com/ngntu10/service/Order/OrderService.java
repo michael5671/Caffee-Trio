@@ -89,10 +89,6 @@ public class OrderService{
             productRepository.save(product);
         });
         order.setOrderStatus(2);
-        order.setIsPaid(1);
-        order.setPaidAt(new Date());
-        order.setIsDelivered(1);
-        order.setDeliveryAt(new Date());
         orderRepository.save(order);
     }
 
@@ -104,7 +100,7 @@ public class OrderService{
     }
 
     @Transactional
-    public void changeStatusOrder(String orderId, ChangeOrderStatus changeOrderStatus) {
+    public Order changeStatusOrder(String orderId, ChangeOrderStatus changeOrderStatus) {
         Order order = orderRepository.findById(UUID.fromString(orderId))
                 .orElseThrow(() -> new NotFoundException("Order not found"));
         order.setOrderStatus(changeOrderStatus.getStatus());
@@ -112,6 +108,7 @@ public class OrderService{
 
         User user = order.getUser();
         userRepository.save(user);
+        return order;
     }
     
     @Transactional(readOnly = true)

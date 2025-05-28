@@ -72,12 +72,13 @@ public class OrderController {
     }
     
     @PostMapping("/{orderId}/status")
-    public ResponseEntity<?> changeOrderStatusById(@PathVariable String orderId,@RequestBody ChangeOrderStatus changeOrderStatus){
+    public ResponseEntity<APIResponse<Order>> changeOrderStatusById(@PathVariable String orderId,
+                                                                    @RequestBody ChangeOrderStatus changeOrderStatus){
         try {
-            orderService.changeStatusOrder(orderId, changeOrderStatus);
-            return ResponseEntity.ok().build();
+            var result = orderService.changeStatusOrder(orderId, changeOrderStatus);
+            return ResponseEntity.ok(new APIResponse<>(true, 200 , result, ""));
         }catch (Exception ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return ResponseEntity.badRequest().body(new APIResponse<>(false, 400, null, ex.getMessage()));
         }
     }
 }
