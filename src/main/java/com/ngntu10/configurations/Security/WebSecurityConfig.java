@@ -64,7 +64,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/documents/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority(Constants.RoleEnum.ADMIN.name())
-                                .anyRequest().authenticated();
+                                .anyRequest().permitAll();
                     }
             )
             .cors(cors -> cors.configurationSource(request -> {

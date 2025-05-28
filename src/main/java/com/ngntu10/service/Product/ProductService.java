@@ -76,58 +76,6 @@ public class ProductService {
      * Retrieves a product by its unique slug.
      * <p>
      * This method queries the product repository to find a product based on the provided slug.
-     * The method also ensures that lazy-loaded collections (images and attributes) are initialized
-     * within the transaction context to prevent LazyInitializationException when accessed later.
-     * Hibernate uses proxy objects for lazy loading, and these proxies require an active session
-     * to load their actual data. Without initialization, accessing these collections outside the
-     * transaction (e.g., in controllers or view layer) will fail.
-     * </p>
-     * <p>
-     * Alternative approaches to handle lazy loading:
-     * 1. (USING) Use EAGER loading by setting fetch = FetchType.EAGER in entity relationships
-     *    - Pros: Simple, always loaded
-     *    - Cons: Performance impact, loads data even when not needed
-     * 2. Map to DTO within transaction
-     *    - Pros: Clean separation, no lazy loading issues
-     *    - Cons: Need to maintain separate DTO classes
-     * 3. Use JOIN FETCH in repository query
-     *    - Pros: Better performance, single query
-     *    - Cons: Less flexible, loads all data at once
-     * 4. Force loading using size() method (current approach)
-     *    - Pros: Simple, readable, commonly used
-     *    - Cons: Generates additional queries, one per collection
-     * </p>
-     * <p>
-     * If the product is found, it returns the product along with a success message.
-     * If the product is not found, it returns a message indicating that the product was not found.
-     * </p>
-     *
-     * @param slug the unique identifier (slug) of the product to be retrieved
-     * @return an {@link APIResponse} object containing the product if found, or an error message if not found.
-     *         The response will have an error flag (true if found, false if not), an HTTP status code,
-     *         the product data (if found) with initialized collections, and a message describing the result.
-     * @throws org.hibernate.LazyInitializationException if the lazy collections are accessed outside of
-     *         the transactional context without being initialized. This occurs because Hibernate's proxy
-     *         objects cannot load data without an active database session
-     */
-    @Transactional
-    public APIResponse<Product> getProductBySlug(String slug) {
-        Optional<Product> optionalProduct = productRepository.findBySlug(slug);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            // Initialize lazy-loaded collections to ensure they're available outside the transaction
-            // This prevents LazyInitializationException when accessing these collections in the view layer
-            // product.getImages().size();      // Initialize the images collection
-            // product.getAttributes().size();   // Initialize the attributes collection
-            return new APIResponse<Product>(false, 200, product, "Product found successfully");
-        }
-        return new APIResponse<Product>(true, 404, null, "Product not found");
-    }
-
-    /**
-     * Retrieves a product by its unique slug.
-     * <p>
-     * This method queries the product repository to find a product based on the provided slug.
      * If the product is found, it returns the product along with a success message.
      * If the product is not found, it returns a message indicating that the product was not found.
      * </p>

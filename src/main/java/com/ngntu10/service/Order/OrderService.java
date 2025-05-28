@@ -1,6 +1,8 @@
 package com.ngntu10.service.Order;
 
+import com.ngntu10.dto.request.ChangeOrderStatus;
 import com.ngntu10.dto.request.CreateOrderDTO;
+import com.ngntu10.dto.request.ListOrderRequest;
 import com.ngntu10.dto.response.APIResponse;
 import com.ngntu10.entity.Order;
 import com.ngntu10.entity.OrderItem;
@@ -10,12 +12,15 @@ import com.ngntu10.exception.NotFoundException;
 import com.ngntu10.repository.OrderRepository;
 import com.ngntu10.repository.ProductRepository;
 import com.ngntu10.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.ngntu10.service.User.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +34,8 @@ public class OrderService{
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-    
+    private final UserService userService;
+
     @Transactional
     public APIResponse<Order> createOrder(CreateOrderDTO createOrderDTO) {
         Order order = modelMapper.map(createOrderDTO, Order.class);
@@ -45,9 +51,7 @@ public class OrderService{
                 .map(item -> {
                     OrderItem orderItem = modelMapper.map(item, OrderItem.class);
                     orderItem.setOrder(finalOrder);
-                    Product productId = productRepository.findBySlug(orderItem.getSlug())
-                            .orElseThrow(() -> new NotFoundException("Product not exist"));
-                    orderItem.setId(productId.getId());
+//                    orderItem.setId(productId.getId());
                     return orderItem;
                 }).collect(Collectors.toList());
         order.setOrderItemList(orderItems);
@@ -78,8 +82,7 @@ public class OrderService{
         Order order = orderRepository.findById(UUID.fromString(orderId))
                 .orElseThrow(() -> new NotFoundException("Order not found"));
         order.getOrderItemList().forEach(orderItem -> {
-            Product product = productRepository.findBySlug(orderItem.getSlug())
-                    .orElseThrow(() -> new NotFoundException("Product not exist"));
+            Product product = new Product();
             int amount = orderItem.getAmount();
             product.setSold(product.getSold() + amount);
             productRepository.save(product);
@@ -99,26 +102,22 @@ public class OrderService{
         orderRepository.delete(order);
     }
 
-//    @Transactional
-//    public void changeStatusOrder(String orderId, ChangeOrderStatus changeOrderStatus) throws FirebaseMessagingException {
-//        Order order = orderRepository.findById(UUID.fromString(orderId))
-//                .orElseThrow(() -> new NotFoundException("Order not found)));
-//        order.setIsDelivered(changeOrderStatus.getIsDelivered());
-//        order.setIsPaid(changeOrderStatus.getIsPaid());
-//        order.setOrderStatus(changeOrderStatus.getStatus());
-//        orderRepository.save(order);
-//
-//        User user = order.getUser();
-//        userRepository.save(user);
-//    }
+    @Transactional
+    public void changeStatusOrder(String orderId, ChangeOrderStatus changeOrderStatus) {
+        Order order = orderRepository.findById(UUID.fromString(orderId))
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.setOrderStatus(changeOrderStatus.getStatus());
+        orderRepository.save(order);
 
-//    private User getUser(String token){
-//        String jwtToken = token.substring(7);
-//        String email = jwtTokenUtil.extractEmail(jwtToken);
-//        Optional<User> optionalUser = authRepository.findByEmail(email);
-//        if(optionalUser.isEmpty())
-//            throw new RuntimeException("User not exist");
-//        return optionalUser.get();
-//    }
+        User user = order.getUser();
+        userRepository.save(user);
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<Order> getAllOrderByMe(ListOrderRequest listOrderRequest, Pageable pageable) {
+        User user = userService.getUser();
+        return null;
+    }
+    
 }
 
