@@ -1,5 +1,6 @@
 package com.ngntu10.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -64,5 +65,17 @@ public class User extends AbstractBaseEntity {
 
     @Column(name = "email_verified_at")
     private LocalDateTime emailVerifiedAt;
+
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "user_like_product",
+            joinColumns = @JoinColumn(name = "user_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "product_id", nullable = false)
+    )
+    List<Product> likeProductList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    private List<Order> orderList = new ArrayList<>();
 
 }

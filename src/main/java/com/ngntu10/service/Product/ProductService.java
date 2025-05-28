@@ -44,10 +44,6 @@ public class ProductService {
      */
      public Product createProduct(ProductDTO createProductDTO) {
          Product product = modelMapper.map(createProductDTO, Product.class);
-         
-         productRepository.save(product);
-
-         product.setSlug(product.getSlug() + "-" + product.getId());
          return productRepository.save(product);
      }
      
@@ -219,10 +215,6 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with ID: " + productId));
         modelMapper.map(updateProductDTO, existingProduct);
         
-        
-        String newSlug = this.generateSlug(existingProduct.getSlug(), productId);
-        existingProduct.setSlug(newSlug);
-        
         Product updatedProduct = productRepository.save(existingProduct);
         return new APIResponse<>(false, 200, updatedProduct, "Product updated successfully");
     }
@@ -263,20 +255,4 @@ public class ProductService {
 
         return new PaginationResponse<>(productPage, productResponses);
     }
-
-    /**
-     * Generates a unique slug for the product.
-     *
-     * @param slug base slug from request
-     * @param id product ID to append
-     * @return generated slug string
-     */
-    private String generateSlug(String slug, String id) {
-        if (slug == null || slug.isEmpty()) {
-            return "untitled-" + id.substring(0, 8);
-        }
-        return slug.toLowerCase()
-                .trim() + "-" + id.substring(0, 8);
-    }
-
 }

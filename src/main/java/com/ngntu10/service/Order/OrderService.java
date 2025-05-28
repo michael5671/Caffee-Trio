@@ -1,13 +1,124 @@
 package com.ngntu10.service.Order;
 
+import com.ngntu10.dto.request.CreateOrderDTO;
+import com.ngntu10.dto.response.APIResponse;
+import com.ngntu10.entity.Order;
+import com.ngntu10.entity.OrderItem;
+import com.ngntu10.entity.Product;
+import com.ngntu10.entity.User;
+import com.ngntu10.exception.NotFoundException;
 import com.ngntu10.repository.OrderRepository;
+import com.ngntu10.repository.ProductRepository;
+import com.ngntu10.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class OrderService {
+public class OrderService{
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+    private final ModelMapper modelMapper;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    
+    @Transactional
+    public APIResponse<Order> createOrder(CreateOrderDTO createOrderDTO) {
+        Order order = modelMapper.map(createOrderDTO, Order.class);
+        User user = userRepository.findById(UUID.fromString(createOrderDTO.getUserId()))
+                .orElseThrow(() -> new NotFoundException("User not exist"));
+        order.setUser(user);
+        order.setPaymentMethod(createOrderDTO.getPaymentType());
+        order.setOrderStatus(0);
+        order.setUser(user);
+        order = orderRepository.save(order);
+        Order finalOrder = order;
+        List<OrderItem> orderItems = createOrderDTO.getOrderItems().stream()
+                .map(item -> {
+                    OrderItem orderItem = modelMapper.map(item, OrderItem.class);
+                    orderItem.setOrder(finalOrder);
+                    Product productId = productRepository.findBySlug(orderItem.getSlug())
+                            .orElseThrow(() -> new NotFoundException("Product not exist"));
+                    orderItem.setId(productId.getId());
+                    return orderItem;
+                }).collect(Collectors.toList());
+        order.setOrderItemList(orderItems);
+        orderRepository.save(order);
+        List<Order> orders = user.getOrderList();
+        orders.add(order);
+        user.setOrderList(orders);
+        userRepository.save(user);
+        return new APIResponse<>(true, 200, order, "Order created successfully");
+    }
+
+    @Transactional
+    public void cancelOrder(String id) {
+        Order order = orderRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.setOrderStatus(3);
+        orderRepository.save(order);
+    }
+
+    public APIResponse<Order> getOneOrderById(String id) {
+        Order order = orderRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        return new APIResponse<>(true, 200, order, "");
+    }
+
+    @Transactional
+    public void handlePaymentOrderById(String orderId) {
+        Order order = orderRepository.findById(UUID.fromString(orderId))
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.getOrderItemList().forEach(orderItem -> {
+            Product product = productRepository.findBySlug(orderItem.getSlug())
+                    .orElseThrow(() -> new NotFoundException("Product not exist"));
+            int amount = orderItem.getAmount();
+            product.setSold(product.getSold() + amount);
+            productRepository.save(product);
+        });
+        order.setOrderStatus(2);
+        order.setIsPaid(1);
+        order.setPaidAt(new Date());
+        order.setIsDelivered(1);
+        order.setDeliveryAt(new Date());
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void deleteOrder(String id) {
+        Order order = orderRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        orderRepository.delete(order);
+    }
+
+//    @Transactional
+//    public void changeStatusOrder(String orderId, ChangeOrderStatus changeOrderStatus) throws FirebaseMessagingException {
+//        Order order = orderRepository.findById(UUID.fromString(orderId))
+//                .orElseThrow(() -> new NotFoundException("Order not found)));
+//        order.setIsDelivered(changeOrderStatus.getIsDelivered());
+//        order.setIsPaid(changeOrderStatus.getIsPaid());
+//        order.setOrderStatus(changeOrderStatus.getStatus());
+//        orderRepository.save(order);
+//
+//        User user = order.getUser();
+//        userRepository.save(user);
+//    }
+
+//    private User getUser(String token){
+//        String jwtToken = token.substring(7);
+//        String email = jwtTokenUtil.extractEmail(jwtToken);
+//        Optional<User> optionalUser = authRepository.findByEmail(email);
+//        if(optionalUser.isEmpty())
+//            throw new RuntimeException("User not exist");
+//        return optionalUser.get();
+//    }
 }
+

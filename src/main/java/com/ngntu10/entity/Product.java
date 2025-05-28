@@ -26,7 +26,10 @@ public class Product extends AbstractBaseEntity {
     @Column(name = "category")
     private String category;
     
-    @Column(name = "slug")
-    private String slug;
+    @Column
+    private Long stock;
+    
+    @Column
+    private Long sold;
     
 }
