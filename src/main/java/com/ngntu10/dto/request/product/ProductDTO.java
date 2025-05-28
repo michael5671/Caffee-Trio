@@ -1,15 +1,18 @@
 package com.ngntu10.dto.request.product;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
@@ -23,52 +26,41 @@ public class ProductDTO {
     )
     private String name;
 
-    @NotBlank(message = "Product description is required")
     @Schema(
             name = "description",
             description = "Product description",
             type = "String",
-            requiredMode = Schema.RequiredMode.REQUIRED,
             example = "Đây là cửa tự động"
     )
     private String description;
 
-    @NotBlank(message = "Product slug is required")
+    @NotNull(message = "Product price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     @Schema(
-            name = "slug",
-            description = "Product description",
+            name = "price",
+            description = "Product price",
+            type = "number",
+            format = "decimal",
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            example = "1500000.00"
+    )
+    private BigDecimal price;
+
+    @Schema(
+            name = "imageUrl",
+            description = "Product image URL",
             type = "String",
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            example = "cua-tu-dong"
+            example = "https://example.com/images/product.jpg"
     )
-    private String slug;
+    private String imageUrl;
 
-    @NotBlank(message = "Product category is required")
+    @NotNull(message = "Category ID is required")
     @Schema(
-            name = "category",
-            description = "Product category",
-            type = "String",
+            name = "categoryId",
+            description = "Category ID",
+            type = "integer",
             requiredMode = Schema.RequiredMode.REQUIRED,
-            example = "Cửa tự động"
+            example = "1"
     )
-    private String category;
-
-    @NotEmpty(message = "Product attributes cannot be empty")
-    @Schema(
-            name = "attributes",
-            description = "Map of product attributes",
-            type = "object", 
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            example = """
-        {
-          "Kích thước": "120x200cm",
-          "Chất liệu": "Thép không gỉ",
-          "Màu sắc": "Đen",
-          "Xuất xứ": "Việt Nam"
-        }
-        """,
-            implementation = Map.class
-    )
-    private Map<String, String> attributes;
-
+    private Long categoryId;
 }
