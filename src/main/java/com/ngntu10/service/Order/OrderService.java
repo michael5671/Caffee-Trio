@@ -117,8 +117,11 @@ public class OrderService{
     @Transactional(readOnly = true)
     public Page<Order> getAllOrderByMe(ListOrderRequest listOrderRequest, Pageable pageable) {
         User user = userService.getUser();
-        List<Order> orderList = user.getOrderList();
-        return new PageImpl<Order>(orderList, pageable, orderList.size());
+        
+        List<Order> orderList = orderRepository.findAllByUserId(user.getId());
+        Page<Order> result = new  PageImpl<Order>(orderList, pageable, orderList.size());
+        
+         return result;
     }
     
 }

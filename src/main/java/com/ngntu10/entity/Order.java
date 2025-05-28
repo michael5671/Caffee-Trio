@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 public class Order extends AbstractBaseEntity {
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderItemList;
 
     @Column

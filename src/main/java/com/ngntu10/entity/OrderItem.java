@@ -1,10 +1,9 @@
 package com.ngntu10.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public class OrderItem extends AbstractBaseEntity {
     private int amount;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonUnwrapped
     @JoinColumn(name = "product_id")
     private Product product;
     
