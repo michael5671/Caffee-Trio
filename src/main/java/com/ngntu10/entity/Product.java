@@ -1,5 +1,6 @@
 package com.ngntu10.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,11 +13,11 @@ import java.time.LocalDateTime;
 @Table
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product extends AbstractBaseEntity {
-    
+
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -33,4 +34,9 @@ public class Product extends AbstractBaseEntity {
     @JoinColumn(name = "category", nullable = false)
     private Category category;
 
+    @Column
+    private Long stock;
+
+    @Column
+    private Long sold;
 }
