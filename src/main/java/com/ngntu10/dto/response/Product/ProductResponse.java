@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 
 @Getter
 @Setter
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ProductResponse {
     @Schema(description = "Product ID", example = "1")
-    private Long id;
+    private UUID id;
 
     @Schema(description = "Product name", example = "Cửa sắt AKO-120")
     private String name;

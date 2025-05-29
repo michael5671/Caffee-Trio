@@ -11,11 +11,14 @@ import com.ngntu10.service.Product.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +56,7 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<ProductResponse>> createProduct(@RequestBody ProductDTO productDTO) {
         var product = productService.createProduct(productDTO);
         return ResponseEntity.ok(new APIResponse<>(
@@ -65,7 +68,7 @@ public class ProductController {
     }
 
     @PutMapping(Endpoint.Product.ID)
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<ProductResponse>> updateProduct(
             @PathVariable String productId,
             @RequestBody ProductDTO productDTO
@@ -80,14 +83,14 @@ public class ProductController {
     }
 
     @DeleteMapping(Endpoint.Product.ID)
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<?>> deleteProduct(@PathVariable String productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok(new APIResponse<>(false, 200, null, "Delete product successfully"));
     }
 
     @DeleteMapping(Endpoint.Product.DELETE_MANY)
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<?>> deleteProducts(@RequestBody DeleteMultiProductDTO deleteMultiProductDTO) {
         productService.deleteProducts(deleteMultiProductDTO);
         return ResponseEntity.ok(new APIResponse<>(false, 200, null, "Delete products successfully"));
@@ -111,8 +114,8 @@ public class ProductController {
     public ResponseEntity<APIResponse<PaginationResponse<ProductResponse>>> searchProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             Pageable pageable
     ) {
         var products = productService.searchProducts(name, categoryId, minPrice, maxPrice, pageable);
@@ -123,4 +126,10 @@ public class ProductController {
                 "Search products successfully"
         ));
     }
+    @GetMapping("/must-try")
+    public ResponseEntity<List<ProductResponse>> getMustTryProducts() {
+        return ResponseEntity.ok(productService.getMustTryProducts());
+    }
+
+
 }

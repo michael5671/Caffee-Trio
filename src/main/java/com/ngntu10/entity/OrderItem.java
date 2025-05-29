@@ -15,11 +15,8 @@ import java.util.UUID;
 @Table(name = "order_item")
 public class OrderItem extends AbstractBaseEntity {
 
-    @Column(name = "amount", nullable = false)
-    private int amount;
-
-    @Column(name = "slug", nullable = false)
-    private String slug;
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
 
     @ManyToOne
     @JsonIgnore

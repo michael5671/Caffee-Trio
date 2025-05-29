@@ -4,8 +4,10 @@ import com.ngntu10.dto.request.product.DeleteMultiProductDTO;
 import com.ngntu10.dto.request.product.ProductDTO;
 import com.ngntu10.dto.response.PaginationResponse;
 import com.ngntu10.dto.response.Product.ProductResponse;
+import com.ngntu10.entity.Category;
 import com.ngntu10.entity.Product;
 import com.ngntu10.exception.NotFoundException;
+import com.ngntu10.repository.CategoryRepository;
 import com.ngntu10.repository.ProductRepository;
 import com.ngntu10.util.PageableUtil;
 import jakarta.transaction.Transactional;
@@ -29,9 +31,21 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
+    private final CategoryRepository categoryRepository;
+
 
     public ProductResponse createProduct(ProductDTO createProductDTO) {
-        Product product = modelMapper.map(createProductDTO, Product.class);
+        Product product = new Product();
+        product.setName(createProductDTO.getName());
+        product.setPrice(createProductDTO.getPrice());
+        product.setDescription(createProductDTO.getDescription());
+        product.setImageUrl(createProductDTO.getImageUrl());
+
+        Category category = categoryRepository.findById(createProductDTO.getCategoryId())
+                .orElseThrow(() -> new NotFoundException("Category not found with ID: " + createProductDTO.getCategoryId()));
+
+        product.setCategory(category);
+
         product = productRepository.save(product);
         return modelMapper.map(product, ProductResponse.class);
     }
@@ -53,19 +67,22 @@ public class ProductService {
         return new PaginationResponse<>(productPage, productResponses);
     }
 
-    public PaginationResponse<ProductResponse> searchProducts(String name, Long categoryId, Double minPrice, Double maxPrice, Pageable pageable) {
+    public PaginationResponse<ProductResponse> searchProducts(String name, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         Specification<Product> spec = Specification.where(null);
         if (name != null && !name.isEmpty()) {
-            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            final String searchName = name.toLowerCase();
+            spec = spec.and((root, query, cb) -> {
+                return cb.like(cb.lower(root.get("name")), "%" + searchName + "%");
+            });
         }
         if (categoryId != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
         }
         if (minPrice != null) {
-            spec = spec.and((root, query, cb) -> cb.ge(root.get("price"), minPrice));
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), minPrice));
         }
         if (maxPrice != null) {
-            spec = spec.and((root, query, cb) -> cb.le(root.get("price"), maxPrice));
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), maxPrice));
         }
         Page<Product> productPage = productRepository.findAll(spec, pageable);
         List<ProductResponse> productResponses = productPage.getContent().stream()
@@ -73,6 +90,7 @@ public class ProductService {
                 .collect(Collectors.toList());
         return new PaginationResponse<>(productPage, productResponses);
     }
+
 
     public PaginationResponse<ProductResponse> getProductsByCategory(Long categoryId, Pageable pageable) {
         Specification<Product> spec = (root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId);
@@ -100,4 +118,12 @@ public class ProductService {
             deleteProduct(id);
         }
     }
+
+    public List<ProductResponse> getMustTryProducts() {
+        List<Product> topProducts = productRepository.findTop5ByOrderByCreatedAtDesc();
+        return topProducts.stream()
+                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .collect(Collectors.toList());
+    }
+
 }

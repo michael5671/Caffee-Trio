@@ -43,14 +43,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<CategoryResponse>> createCategory(@RequestBody CategoryDTO categoryDTO) {
         CategoryResponse category = categoryService.createCategory(categoryDTO);
         return ResponseEntity.ok(new APIResponse<>(false, 200, category, "Create category successfully"));
     }
 
     @PutMapping(Endpoint.Category.ID)
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<CategoryResponse>> updateCategory(
             @PathVariable Long id,
             @RequestBody CategoryDTO categoryDTO) {
@@ -59,7 +59,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(Endpoint.Category.ID)
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<APIResponse<?>> deleteCategory(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.deleteCategory(id));
     }
