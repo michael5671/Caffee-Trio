@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Getter
 @Setter
+
 public class PaginationResponse<T> extends AbstractBaseResponse {
     @Schema(
         name = "page",
