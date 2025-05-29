@@ -86,6 +86,7 @@ public class OrderService{
             Product product = new Product();
             int amount = orderItem.getAmount();
 
+            product.setSold(product.getSold() + amount);
             productRepository.save(product);
         });
         order.setOrderStatus(2);

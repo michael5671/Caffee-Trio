@@ -33,4 +33,12 @@ public class Product extends AbstractBaseEntity {
     @JoinColumn(name = "category", nullable = false)
     private Category category;
 
+    
+    @Column
+    private Long stock;
+    
+    @Column
+    private Long sold;
+    
+
 }

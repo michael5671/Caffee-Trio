@@ -18,14 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
-    @NotBlank(message = "Product name is required")
-    @Schema(
-            name = "name",
-            description = "Product name",
-            type = "String",
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            example = "Cửa sắt AKO-120"
-    )
     private String name;
 
     @Schema(
@@ -65,4 +57,5 @@ public class ProductDTO {
             example = "1"
     )
     private Long categoryId;
+
 }
