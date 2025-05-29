@@ -60,5 +60,12 @@ public class Endpoint {
         public static final String BASE = API_PREFIX + "/dashboard";
     }
 
+    public static class Category {
+        public static final String BASE = "/api/categories";
+        public static final String ID = "/{id}";
+        public static final String SEARCH = "/search";
+        public static final String PAGE = "/page";
+    }
+
 }
 

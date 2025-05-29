@@ -85,6 +85,7 @@ public class OrderService{
         order.getOrderItemList().forEach(orderItem -> {
             Product product = new Product();
             int amount = orderItem.getAmount();
+
             product.setSold(product.getSold() + amount);
             productRepository.save(product);
         });
