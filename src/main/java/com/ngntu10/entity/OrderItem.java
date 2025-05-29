@@ -17,9 +17,6 @@ public class OrderItem extends AbstractBaseEntity {
     @Column(name = "amount", nullable = false)
     private int amount;
 
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
-
     @ManyToOne
     @JsonUnwrapped
     @JoinColumn(name = "product_id")
