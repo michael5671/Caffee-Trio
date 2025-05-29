@@ -1,38 +1,30 @@
 package com.ngntu10.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table
+@Table(name = "products", indexes = {
+        @Index(columnList = "name", name = "idx_products_name"),
+})
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product extends AbstractBaseEntity {
+    @Column(name = "name")
+    private String name;    
     
-    @Column(nullable = false, length = 100)
-    private String name;
-
-    @Column(length = 500)
+    @Column(name = "description")
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
-    @Column(name = "image_url", length = 250)
-    private String imageUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category", nullable = false)
-    private Category category;
-
+    @Column(name = "category")
+    private String category;
     
     @Column
     private Long stock;
@@ -40,5 +32,4 @@ public class Product extends AbstractBaseEntity {
     @Column
     private Long sold;
     
-
 }

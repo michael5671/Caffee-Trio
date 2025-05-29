@@ -61,12 +61,6 @@ public class WebSecurityConfig {
                                         "/configuration/security"
                                 ).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/products/**").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/api/products/**").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/api/products/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/categories/**").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/documents/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority(Constants.RoleEnum.ADMIN.name())
