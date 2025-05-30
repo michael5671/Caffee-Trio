@@ -110,15 +110,15 @@ public class OrderService{
         userRepository.save(user);
         return order;
     }
-    
+
     @Transactional(readOnly = true)
     public Page<Order> getAllOrderByMe(ListOrderRequest listOrderRequest, Pageable pageable) {
         User user = userService.getUser();
-        
+
         List<Order> orderList = orderRepository.findAllByUserId(user.getId());
         Page<Order> result = new  PageImpl<Order>(orderList, pageable, orderList.size());
-        
-         return result;
+
+        return result;
     }
     
 }
