@@ -7,12 +7,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class VoucherResponse {
+
+    private UUID id;
 
     private BigDecimal discountPercentage;
 
