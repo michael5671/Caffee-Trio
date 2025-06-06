@@ -17,7 +17,6 @@ import java.util.List;
 public class CreateOrderDTO {
     private String address;
     private String fullName;
-    private Long itemsPrice;
     private List<OrderItem> orderItems;
     private PaymentType paymentType;
     private String phone;

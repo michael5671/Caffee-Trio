@@ -76,6 +76,7 @@ public class User extends AbstractBaseEntity {
     List<Product> likeProductList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    @JsonIgnore
     private List<Order> orderList = new ArrayList<>();
 
 }
