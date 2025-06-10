@@ -50,9 +50,10 @@ public class OrderService{
         Order finalOrder = order;
         List<OrderItem> orderItems = createOrderDTO.getOrderItems().stream()
                 .map(item -> {
+                    Product product = productRepository.findById(item.getId()).get();
                     OrderItem orderItem = modelMapper.map(item, OrderItem.class);
+                    orderItem.setProduct(product);
                     orderItem.setOrder(finalOrder);
-//                    orderItem.setId(productId.getId());
                     return orderItem;
                 }).collect(Collectors.toList());
         order.setOrderItemList(orderItems);
@@ -61,7 +62,7 @@ public class OrderService{
         orders.add(order);
         user.setOrderList(orders);
         userRepository.save(user);
-        return new APIResponse<>(true, 200, order, "Order created successfully");
+        return new APIResponse<>(false, 200, order, "Order created successfully");
     }
 
     @Transactional
@@ -113,9 +114,8 @@ public class OrderService{
 
     @Transactional(readOnly = true)
     public Page<Order> getAllOrderByMe(ListOrderRequest listOrderRequest, Pageable pageable) {
-        User user = userService.getUser();
 
-        List<Order> orderList = orderRepository.findAllByUserId(user.getId());
+        List<Order> orderList = orderRepository.findAll();
         Page<Order> result = new  PageImpl<Order>(orderList, pageable, orderList.size());
 
         return result;

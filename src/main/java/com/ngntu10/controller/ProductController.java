@@ -11,6 +11,7 @@ import com.ngntu10.service.Product.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,9 +32,9 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<APIResponse<PaginationResponse<ProductResponse>>> searchProducts(
+    public ResponseEntity<APIResponse<PaginationResponse<Product>>> searchProducts(
             @RequestParam Map<String, String> params,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         var products = productService.searchProducts(params, pageable);
         return ResponseEntity.ok(new APIResponse<>(

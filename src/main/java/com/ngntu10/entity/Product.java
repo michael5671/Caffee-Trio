@@ -1,6 +1,7 @@
 package com.ngntu10.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,6 +32,7 @@ public class Product extends AbstractBaseEntity {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "category", nullable = false)
     private Category category;
 

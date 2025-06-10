@@ -48,7 +48,7 @@ public class OrderController {
             @ParameterObject @ModelAttribute ListOrderRequest listOrderRequest,
             @ParameterObject Pageable pageable){
         var result = orderService.getAllOrderByMe(listOrderRequest, pageable);
-        return ResponseEntity.ok(new APIResponse<>(true, 200, result, ""));
+        return ResponseEntity.ok(new APIResponse<>(false, 200, result, ""));
     }
     
     @PostMapping("/{orderId}/cancel")

@@ -59,13 +59,10 @@ public class ProductService {
         return modelMapper.map(updatedProduct, ProductResponse.class);
     }
 
-    public PaginationResponse<ProductResponse> searchProducts(Map<String, String> params, Pageable pageable) {
+    public PaginationResponse<Product> searchProducts(Map<String, String> params, Pageable pageable) {
         Pageable realPageable = pageable != null ? pageable : PageableUtil.getPageable(params);
         Page<Product> productPage = productRepository.findAll(realPageable);
-        List<ProductResponse> productResponses = productPage.getContent().stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
-                .collect(Collectors.toList());
-        return new PaginationResponse<>(productPage, productResponses);
+        return new PaginationResponse<>(productPage, productPage.getContent());
     }
 
     public PaginationResponse<ProductResponse> searchProducts(String name, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {

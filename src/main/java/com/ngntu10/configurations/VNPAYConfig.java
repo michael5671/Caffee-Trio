@@ -53,7 +53,7 @@ public class VNPAYConfig {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String vnpCreateDate = now.format(formatter);
         vnpParamsMap.put("vnp_CreateDate", vnpCreateDate);
-        LocalDateTime expireDateTime = now.plusMinutes(15);
+        LocalDateTime expireDateTime = now.plusMinutes(10000);
         String vnpExpireDate = expireDateTime.format(formatter);
         vnpParamsMap.put("vnp_ExpireDate", vnpExpireDate);
         return vnpParamsMap;
